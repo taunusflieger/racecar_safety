@@ -70,6 +70,8 @@ void racecar_safety::laserCallback(
   double range_min = 0.1;
   double range_max = 12.0;
 
+  ROS_DEBUG_STREAM("racecar_safety::laserCallback");
+
   sectors = CreateSectors(angle_min, angle_max, BUCKETS);
 
   // Create some test data
