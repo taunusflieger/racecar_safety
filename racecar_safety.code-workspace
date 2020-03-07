@@ -73,6 +73,9 @@
 			"cfenv": "cpp",
 			"typeindex": "cpp",
 			"typeinfo": "cpp"
-		}
+		},
+		"editor.definitionLinkOpensInPeek": true,
+		"cmake.sourceDirectory": "${workspaceFolder}/src",
+		"cmake.autoSelectActiveFolder": false
 	}
 }

@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2020 Michael Zill
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,9 +26,13 @@
  * Author: Michael Zill
  */
 
-
 #ifndef RACECAR_SAFETY_H_
 #define RACECAR_SAFETY_H_
+
+#include <ackermann_msgs/AckermannDrive.h>
+#include <ackermann_msgs/AckermannDriveStamped.h>
+#include <ros/ros.h>
+#include <sensor_msgs/LaserScan.h>
 
 #include <algorithm>
 #include <cerrno>
@@ -36,18 +40,14 @@
 #include <cmath>
 #include <iostream>
 #include <iterator>
+#include <string>
 #include <thread>
 #include <tuple>
-#include <string>
 #include <vector>
-#include <ros/ros.h>
-#include <sensor_msgs/LaserScan.h>
-#include <ackermann_msgs/AckermannDrive.h>
-#include <ackermann_msgs/AckermannDriveStamped.h>
 
 #define BUCKETS 19
-#define FAN_ANGLE 15.0    // angle that is considered the front
-#define FRONT_ANGLE 135.0 // front angle
+#define FAN_ANGLE 15.0     // angle that is considered the front
+#define FRONT_ANGLE 135.0  // front angle
 #define FRONT_ANGLE_START (FRONT_ANGLE - (FAN_ANGLE / 2.0))
 #define FRONT_ANGLE_END (FRONT_ANGLE + (FAN_ANGLE / 2.0))
 
@@ -57,13 +57,11 @@
 namespace racecar_safety {
 
 struct sector {
-  double angle;        // mid point angle of sector
-  double range_sum;    // sum of all range measurements in sector
-  int measurement_cnt; // number of measurements in sector
+  double angle;         // mid point angle of sector
+  double range_sum;     // sum of all range measurements in sector
+  int measurement_cnt;  // number of measurements in sector
   sector() : angle(0), range_sum(0), measurement_cnt(0) {}
 };
-
-
 
 struct measurement {
   double range;
@@ -72,10 +70,8 @@ struct measurement {
       : angle(angle), range(range) {}
 };
 
-
-
 class racecar_safety {
-protected:
+ protected:
   // Our NodeHandle
   ros::NodeHandle nh_;
   ros::Subscriber laser_scan_subscriber_;
@@ -98,12 +94,11 @@ protected:
   void laserCallback(const sensor_msgs::LaserScan::ConstPtr &scan);
   void drive();
 
-public:
-  racecar_safety(ros::NodeHandle nh, ros::NodeHandle private_nh, std::string topic);
-  
+ public:
+  racecar_safety(ros::NodeHandle nh, ros::NodeHandle private_nh,
+                 std::string topic);
 };
 
-} // namespace racecar_safety
+}  // namespace racecar_safety
 
-#endif // RACECAR_SAFETY_H_
-
+#endif  // RACECAR_SAFETY_H_

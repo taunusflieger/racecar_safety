@@ -29,12 +29,10 @@ SOFTWARE.
  */
 #include "racecar_safety/racecar_safety.h"
 
-
 namespace racecar_safety {
 
 racecar_safety::racecar_safety(ros::NodeHandle nh, ros::NodeHandle private_nh,
                                std::string topic) {
-
   nh_ = nh;
   th_ = std::thread(&racecar_safety::drive, this);
   th_.join();
@@ -42,7 +40,8 @@ racecar_safety::racecar_safety(ros::NodeHandle nh, ros::NodeHandle private_nh,
       nh.subscribe(topic, 10, &racecar_safety::laserCallback, this);
 }
 
-std::vector<sector> racecar_safety::CreateSectors(double a, double b, std::size_t N) {
+std::vector<sector> racecar_safety::CreateSectors(double a, double b,
+                                                  std::size_t N) {
   double h = (b - a) / static_cast<double>(N - 1);
   std::vector<sector> xs(N);
   std::vector<sector>::iterator x;
@@ -88,7 +87,6 @@ void racecar_safety::laserCallback(
                0,
            };
        angle <= angle_max; angle += angle_increment, i++) {
-
     measurement m(angle, ranges[i]);
     measurements.push_back(m);
   }
@@ -118,7 +116,7 @@ void racecar_safety::laserCallback(
     mi_start = mi + 1;
   }
 
-  front_obstacle = false; // clear old status
+  front_obstacle = false;  // clear old status
   for (is = sectors.begin() + 1; is != sectors.end(); ++is) {
     if ((*is).angle >= FRONT_ANGLE_START && (*is).angle <= FRONT_ANGLE_END) {
       if (((*is).measurement_cnt > 0 &&
@@ -132,6 +130,4 @@ void racecar_safety::laserCallback(
   received_data_ = true;
 }
 
-
-
-} // namespace racecar_safety
+}  // namespace racecar_safety

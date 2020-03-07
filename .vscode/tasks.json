@@ -4,11 +4,16 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "type": "catkin_make",
+            "type": "shell",
+            "label": "build mz",
+            "command": "catkin_make --directory ${workspaceFolder}", 
             "problemMatcher": [
                 "$catkin-gcc"
             ],
-            "group": "build"
+            "group": {
+                "kind": "build",
+                "isDefault": true
+              }
         }
     ]
 }
