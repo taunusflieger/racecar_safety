@@ -42,18 +42,17 @@ racecar_safety::racecar_safety(ros::NodeHandle nh, ros::NodeHandle private_nh,
 
 std::vector<sector> racecar_safety::CreateSectors(double a, double b,
                                                   std::size_t N) {
-  double h = (b - a) / static_cast<double>(N - 1);
+  auto h = (b - a) / static_cast<double>(N - 1);
   std::vector<sector> xs(N);
-  std::vector<sector>::iterator x;
-  double val;
-  for (x = xs.begin(), val = a; x != xs.end(); ++x, val += h) {
+  for (auto [x, val] = std::tuple{xs.begin(), a}; x != xs.end();
+       ++x, val += h) {
     (*x).angle = val;
   }
   return xs;
 }
 
 void racecar_safety::drive() {
-  for (int i = 0; i < 5; i++) {
+  for (auto i = 0; i < 5; i++) {
     std::cout << "command"
               << " :: " << i << std::endl;
   }
@@ -66,18 +65,18 @@ void racecar_safety::laserCallback(
   std::vector<sector> sectors;
   std::vector<double> ranges;
   std::vector<double> ranges_filtered;
-  double range_min = 0.1;
-  double range_max = 12.0;
+  auto range_min = 0.1;
+  auto range_max = 12.0;
 
   ROS_DEBUG_STREAM("racecar_safety::laserCallback");
 
   sectors = CreateSectors(angle_min, angle_max, BUCKETS);
 
   // Create some test data
-  for (double angle = angle_min; angle <= angle_max; angle += angle_increment) {
+  for (auto angle = angle_min; angle <= angle_max; angle += angle_increment) {
     // Create some random distances
-    double range = 0.0 + static_cast<double>(rand()) /
-                             (static_cast<double>(RAND_MAX / (12.0 - 0.0)));
+    auto range = 0.0 + static_cast<double>(rand()) /
+                           (static_cast<double>(RAND_MAX / (12.0 - 0.0)));
     ranges.push_back(range);
   }
 
@@ -101,23 +100,21 @@ void racecar_safety::laserCallback(
 
   // Calculate averages per sector
   // The measurements_filtered list is sorted by angle in an ascending order
-  std::vector<sector>::iterator is;
-  std::vector<measurement>::iterator mi;
   std::vector<measurement>::iterator mi_start = measurements_filtered.begin();
-  for (is = sectors.begin() + 1; is != sectors.end(); ++is) {
-    for (mi = mi_start; mi != measurements_filtered.end(); ++mi) {
+  for (auto is = sectors.begin() + 1; is != sectors.end(); ++is) {
+    for (auto mi = mi_start; mi != measurements_filtered.end(); ++mi) {
       if ((*mi).angle <= (*is).angle) {
         (*is).range_sum += (*mi).range;
         (*is).measurement_cnt++;
       } else {
+        mi_start = mi + 1;
         break;
       }
     }
-    mi_start = mi + 1;
   }
 
   front_obstacle = false;  // clear old status
-  for (is = sectors.begin() + 1; is != sectors.end(); ++is) {
+  for (auto is = sectors.begin() + 1; is != sectors.end(); ++is) {
     if ((*is).angle >= FRONT_ANGLE_START && (*is).angle <= FRONT_ANGLE_END) {
       if (((*is).measurement_cnt > 0 &&
            (*is).range_sum / static_cast<double>((*is).measurement_cnt)) <
